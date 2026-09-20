@@ -1,0 +1,6 @@
+export type PersonalDraft<T> = {profile:T;plan:'essencial'|'destaque'|'premium'|null;photo:Blob|null};
+const DB_NAME='personal-brasil-drafts';
+const STORE='drafts';
+function openDb():Promise<IDBDatabase>{return new Promise((resolve,reject)=>{const request=indexedDB.open(DB_NAME,1);request.onupgradeneeded=()=>{if(!request.result.objectStoreNames.contains(STORE))request.result.createObjectStore(STORE)};request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error)})}
+export async function loadPersonalDraft<T>():Promise<PersonalDraft<T>|undefined>{const db=await openDb();try{return await new Promise((resolve,reject)=>{const request=db.transaction(STORE,'readonly').objectStore(STORE).get('personal');request.onsuccess=()=>resolve(request.result as PersonalDraft<T>|undefined);request.onerror=()=>reject(request.error)})}finally{db.close()}}
+export async function savePersonalDraft<T>(draft:PersonalDraft<T>):Promise<void>{const db=await openDb();try{await new Promise<void>((resolve,reject)=>{const transaction=db.transaction(STORE,'readwrite');transaction.objectStore(STORE).put(draft,'personal');transaction.oncomplete=()=>resolve();transaction.onerror=()=>reject(transaction.error);transaction.onabort=()=>reject(transaction.error)})}finally{db.close()}}
