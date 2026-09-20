@@ -22,8 +22,8 @@ O fluxo preparado é: acesso por e-mail, envio do perfil e foto, análise do CRE
 
 ## Para ativar
 
-1. Criar **um projeto Supabase exclusivo** do Personal Brasil. O projeto existente de outro sistema não deve ser usado sem decisão explícita.
-2. Aplicar `database/schema.sql` nesse projeto; revisar as políticas RLS e configurar o URL do site e redirecionamento de autenticação para `https://personalmodels.vercel.app`.
+1. Usar o projeto Supabase autorizado `efahamylmoueniflnvzl`. As tabelas `personal_*` e o bucket `personal-photos` são separados das tabelas já existentes; a autenticação continua compartilhada no projeto.
+2. O esquema `database/schema.sql` foi aplicado nesse projeto; revisar as políticas RLS e configurar o URL do site e redirecionamento de autenticação para `https://personalmodels.vercel.app`.
 3. Conectar a conta Stripe destinada a esta plataforma. Configurar o endpoint `https://personalmodels.vercel.app/api/stripe-webhook` para eventos `checkout.session.completed`, `customer.subscription.created`, `customer.subscription.updated` e `customer.subscription.deleted`.
 4. Configurar as variáveis de `.env.example` na Vercel, mantendo as chaves de serviço e Stripe somente no servidor. Publicar novamente.
 5. Criar a área administrativa para aprovar o CREF e revisar o fluxo completo em ambiente de testes da Stripe antes de aceitar pagamentos reais.

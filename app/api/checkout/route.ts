@@ -13,10 +13,10 @@ export async function POST(request:Request){
   try{({plan}=await request.json())}catch{return NextResponse.json({error:'Pedido inválido.'},{status:400})}
   if(!isPlanId(plan))return NextResponse.json({error:'Plano inválido.'},{status:400});
   const db=adminClient(config);
-  const [{data:review,error:reviewError},{data:profile,error:profileError}]=await Promise.all([db.from('cref_reviews').select('status,cref,cref_state').eq('user_id',user.id).maybeSingle(),db.from('professional_profiles').select('cref,cref_state').eq('user_id',user.id).maybeSingle()]);
+  const [{data:review,error:reviewError},{data:profile,error:profileError}]=await Promise.all([db.from('personal_cref_reviews').select('status,cref,cref_state').eq('user_id',user.id).maybeSingle(),db.from('personal_professional_profiles').select('cref,cref_state').eq('user_id',user.id).maybeSingle()]);
   if(reviewError||profileError)return NextResponse.json({error:'Não foi possível verificar seu cadastro.'},{status:503});
   if(review?.status!=='approved'||review.cref!==profile?.cref||review.cref_state!==profile?.cref_state)return NextResponse.json({error:'Seu CREF precisa ser aprovado antes da assinatura.'},{status:403});
-  const {data:current,error:subscriptionError}=await db.from('subscriptions').select('status,stripe_customer_id').eq('user_id',user.id).maybeSingle();
+  const {data:current,error:subscriptionError}=await db.from('personal_subscriptions').select('status,stripe_customer_id').eq('user_id',user.id).maybeSingle();
   if(subscriptionError)return NextResponse.json({error:'Não foi possível consultar sua assinatura.'},{status:503});
   if(current&&['active','trialing','past_due','unpaid','incomplete'].includes(current.status))return NextResponse.json({error:'Você já tem uma assinatura. A troca de plano ficará disponível no painel.'},{status:409});
   try{

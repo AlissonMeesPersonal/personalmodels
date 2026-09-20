@@ -25,7 +25,7 @@ export async function POST(request:Request){
       const userId=sub.metadata.user_id,plan=sub.metadata.plan;
       if(!userId||!isPlanId(plan))return NextResponse.json({error:'Assinatura sem identificação válida'},{status:422});
       const customerId=typeof sub.customer==='string'?sub.customer:sub.customer.id;
-      const {error}=await adminClient(config).from('subscriptions').upsert({user_id:userId,plan,status:sub.status,stripe_subscription_id:sub.id,stripe_customer_id:customerId,updated_at:new Date().toISOString()},{onConflict:'user_id'});
+      const {error}=await adminClient(config).from('personal_subscriptions').upsert({user_id:userId,plan,status:sub.status,stripe_subscription_id:sub.id,stripe_customer_id:customerId,updated_at:new Date().toISOString()},{onConflict:'user_id'});
       if(error)throw error;
     }catch{return NextResponse.json({error:'Falha ao atualizar assinatura'},{status:500})}
   }
